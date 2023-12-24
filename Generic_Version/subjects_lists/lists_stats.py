@@ -29,8 +29,8 @@ def run_lists_stats(path_bids, output_path, database, subjects_list, adnimerge):
 
     '''
 
-    from Code.subjects.lists_stats import statistics_cn_ad_mci_M00, statistics_cn_ad_mci_amylod_M00
-    from Code.subjects.subjects_lists import run_subjects_lists, create_diagnosis_all_participants, obtain_global_list
+
+    from subjects_lists.subjects_lists import run_subjects_lists, create_diagnosis_all_participants, obtain_global_list
 
     import pandas as pd
     import os
@@ -103,6 +103,7 @@ def statistics_cn_ad_mci_M00(output_path, database, global_list, global_list_nam
         N_men = len([i for i in range(len(age_bl)) if sex_bl[i] == 'M'])
 
         print ('+-+-+-+-+-+-+-+' + global_list_name[li] + '-+-+-+-+-+-+-+-+-+-+-+-+-')
+        '''
         print ('Group of len : ' + str(len(age_bl)) + ' has age = ' + str(age_m) + ' +/- ' + str(
             age_u) + ' and range = ' + str(np.min(np.asarray(age_bl))) + ' / ' + str(np.max(np.asarray(age_bl))))
         print ('N male = ' + str(N_men) + ' N female = ' + str(N_women))
@@ -110,9 +111,10 @@ def statistics_cn_ad_mci_M00(output_path, database, global_list, global_list_nam
             np.min(np.asarray(mmse_bl))) + ' / ' + str(np.max(np .asarray(mmse_bl))))
         print ('CDR:' + str(cdr_bl.count(0)) + '(0); ' + str(cdr_bl.count(0.5)) + '(0.5); ' + str(
             cdr_bl.count(1)) + '(1); ' + str(cdr_bl.count(2)) + '(2); ')
+        '''
 
 
-def statistics_cn_ad_mci_amylod_M00(path_bids, output_path):
+def statistics_cn_ad_mci_amylod_M00(path_bids, adnimerge, output_path, global_list, global_list_name):
 
     '''
 
@@ -130,7 +132,8 @@ def statistics_cn_ad_mci_amylod_M00(path_bids, output_path):
     import os
     import pandas as pd
     import numpy as np
-    diagnosis = ['AD-', 'AD+', 'CN-', 'CN+', 'MCI-', 'MCI+', 'pMCI+', 'pMCI-', 'sMCI+', 'sMCI-']
+    #diagnosis = ['AD-', 'AD+', 'CN-', 'CN+', 'MCI-', 'MCI+', 'pMCI+', 'pMCI-', 'sMCI+', 'sMCI-']
+    diagnosis = ['AD-', 'AD+', 'CN-', 'CN+']
     participants_tsv = pd.io.parsers.read_csv(os.path.join(path_bids, 'participants.tsv'), sep='\t')
     for i in diagnosis:
         path_amyloid = pd.io.parsers.read_csv(os.path.join(output_path, 'tasks_ADNI_' + i + '.tsv'),
@@ -143,7 +146,10 @@ def statistics_cn_ad_mci_amylod_M00(path_bids, output_path):
             ses = pd.io.parsers.read_csv(os.path.join(path_bids, j, j + '_sessions.tsv'), sep='\t')
             sex.append(participants_tsv[participants_tsv.participant_id == j].sex.item())
             age.append(ses[ses.session_id == 'ses-M00'].age.item())
-            mmse.append(ses[ses.session_id == 'ses-M00'].MMS.item())
+            try:
+                mmse.append(ses[ses.session_id == 'ses-M00'].MMS.item())
+            except:
+                mmse.append(0)
             cdr.append(ses[ses.session_id == 'ses-M00'].cdr_global.item())
 
         age_m = np.mean(np.asarray(age))
@@ -156,6 +162,7 @@ def statistics_cn_ad_mci_amylod_M00(path_bids, output_path):
 
         print ('****   ' + i + '   *****')
         print ('Group of len : ' + str(len(age)))
+        '''
         print ('N male = ' + str(N_men) + ' N female = ' + str(N_women))
         print ('AGE = ' + str(age_m) + ' +/- ' + str(age_u) + ' range ' + str(np.min(np.asarray(age))) + ' / ' + str(
             np.max(np.asarray(age))))
@@ -165,7 +172,7 @@ def statistics_cn_ad_mci_amylod_M00(path_bids, output_path):
 
         print ('CDR:' + str(cdr.count(0)) + '(0); ' + str(cdr.count(0.5)) + '(0.5); ' + str(
             cdr.count(1)) + '(1); ' + str(cdr.count(2)) + '(2); ')
-
+        '''
 
 
 

@@ -31,9 +31,7 @@ def run_subjects_lists(path_bids, output_path, database, subjects_list, adnimerg
 
     '''
 
-    from Code.subjects.subjects_lists import max_vis, create_subjects_lists, create_diagnosis_all_participants, \
-        obtain_global_list, find_parameters_statistics, obtain_lists_diagnosis, obtain_lists_diagnosis_amyloid, \
-        parameters_cn_ad_mci_amylod_M00
+
     import os
     import pandas as pd
 
@@ -84,7 +82,7 @@ def create_subjects_lists(path_bids, output_path, database):
 
     # read the participants.tsv file in ADNI
     participants_tsv = pd.io.parsers.read_csv(os.path.join(path_bids, 'participants.tsv'), sep='\t')
-    all_subjects = participants_tsv[participants_tsv.diagnosis_bl != 'SMC'].participant_id
+    all_subjects = participants_tsv[participants_tsv.diagnosis_sc != 'SMC'].participant_id
     all_subjects= all_subjects.unique()
     sublist = all_subjects.tolist()
     subjects_with_t1 = []
@@ -162,7 +160,7 @@ def create_diagnosis_all_participants(path_bids, subjects_list, output_path, dat
     MCI_AD_MCI = []
     CN_change = 0
     AD_change = 0
-    no_diagnosis_bl = 0
+    no_diagnosis_sc = 0
 
     # iteration for all the subjects in the participants.tsv
     for sub in range(len(sublist)):
@@ -181,11 +179,11 @@ def create_diagnosis_all_participants(path_bids, subjects_list, output_path, dat
             if os.path.exists(os.path.join(path_bids, sublist[sub], 'ses-M00')):
 
                 idx_bl = session.index('ses-M00')
-                diagnosis_bl = diagnosis[idx_bl]
+                diagnosis_sc = diagnosis[idx_bl]
                 to_remove = False
 
                 # classification of the different type of MCI (MCI which remains stable, MCI which converts in AD and MCI whose future status is unknown becase they havent been followed for 36 months at least)
-                if diagnosis_bl == 'MCI':
+                if diagnosis_sc == 'MCI':
                     has_converted = False
                     for ses in range(len(diagnosis)):
                         if int(session[ses][5:]) <= N_months and diagnosis[ses] == 'AD':
@@ -197,19 +195,19 @@ def create_diagnosis_all_participants(path_bids, subjects_list, output_path, dat
                                     sublist[sub] + ' is MCI in baseline but moves back to CN in one of its timepoints. '
                                     + 'Subject discarded')
                                 MCI_CN.append(sublist[sub])
-                            diagnosis_bl = 'Inconsistent'
+                            diagnosis_sc = 'Inconsistent'
                     if has_converted:
-                        diagnosis_bl = 'pMCI'
+                        diagnosis_sc = 'pMCI'
                     else:
                         if max_vis(session) < N_months:
-                            diagnosis_bl = 'uMCI'
+                            diagnosis_sc = 'uMCI'
                             if not to_remove:
                                 print(
                                     sublist[sub] + ' is undetermined MCI : not enough timepoint to say if sMCI or pMCI.'
                                     + 'Subject discarded')
                                 MCI_inconsistent += 1
                         else:
-                            diagnosis_bl = 'sMCI'
+                            diagnosis_sc = 'sMCI'
                     need_MCI_AD_MCI_check = False
                     for ses in range(len(diagnosis)):
                         if diagnosis[ses] == 'AD':
@@ -229,29 +227,29 @@ def create_diagnosis_all_participants(path_bids, subjects_list, output_path, dat
                                 print(sublist[
                                           sub] + ' is MCI at baseline, then goes AD, and then back to MCI. Subject discarded')
                                 MCI_AD_MCI.append(sublist[sub])
-                elif diagnosis_bl == 'CN':
+                elif diagnosis_sc == 'CN':
                     for l in range(len(session)):
                         if int(session[l][5:]) <= N_months and diagnosis[l] != 'CN' and diagnosis[l] == diagnosis[l]:
                             if not to_remove:
                                 print(sublist[sub] + ' is CN at baseline and change within the first ' + str(
                                     N_months) + ' months')
                                 CN_change += 1
-                elif diagnosis_bl == 'AD':
+                elif diagnosis_sc == 'AD':
                     for l in range(len(session)):
                         if diagnosis[l] != 'AD' and diagnosis[l] == diagnosis[l]:
                             if not to_remove:
                                 print(sublist[
                                           sub] + ' is AD at baseline and change within the following months. Subject discarded')
                                 AD_change += 1
-                elif diagnosis_bl != diagnosis_bl:
+                elif diagnosis_sc != diagnosis_sc:
                     to_remove = True
                     print(sublist[sub] + ' do not have a diagnosis at baseline, subject discarded')
-                    no_diagnosis_bl += 1
+                    no_diagnosis_sc += 1
 
                     # final subject list
                 if not to_remove:
                     final_subject_list.append(sublist[sub])
-                    final_diagnosis_list.append(diagnosis_bl)
+                    final_diagnosis_list.append(diagnosis_sc)
                 else:
                     discarded_list.append(sublist[sub])
                     discarded += 1
@@ -357,7 +355,10 @@ def find_parameters_statistics(path_bids, subjects_list, output_path, database):
         index = index[0]
         diagnosis = session_file_read.diagnosis[index]
         cdrscore = session_file_read.cdr_global[index]
-        mmscore = session_file_read.MMS[index]
+        try:
+            mmscore = session_file_read.MMS[index]
+        except:
+            mmscore = 0
 
         if database == 'AIBL':
             #mmscore = session_file_read.MMS[index]
