@@ -1,4 +1,28 @@
+# ENV Install
+## Important
+It is based from e20e670cc50ddaedf42c24eca6806f42a824cc56
+## Prepare
+OS: ubuntu 22.04
+PYTHON: 3.10
+## Install
+default, you had installed miniconda, matlab.
 
+```bash
+conda create --name ni38 python=3.8 -y
+conda activate ni38
+
+mkdir research
+cd research
+
+git clone https://github.com/bibo19842003/AD-ML.git -b master
+cd AD-ML
+cd Generic_Version
+pip install -r requirement.txt
+```
+
+# Below is origin README
+# Below is origin README
+# Below is origin README
 This directory contains the guidelines and steps to generic experiments for Alzheimer’s disease classification from clinical and 
 neuroimaging data. The data is obtained from [ADNI](http://adni.loni.usc.edu/) dataset. 
 It is developed by the [ARAMIS Lab](http://www.aramislab.fr).

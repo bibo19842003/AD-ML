@@ -1,0 +1,10 @@
+numpy==1.23.5
+jupyter==1.0.0
+jupyter_client==7.4.9
+notebook==6.5.6
+dcm2niix==1.0.20220715
+xlrd==1.2.0
+markupsafe==2.0.1
+clinica==0.5.3
+nbconvert==6.4.5
+nbclient==0.5.13
