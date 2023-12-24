@@ -2,8 +2,8 @@
 ## Important
 It is based from e20e670cc50ddaedf42c24eca6806f42a824cc56
 ## Prepare
-OS: ubuntu 22.04
-PYTHON: 3.10
+OS: ubuntu 22.04 <br>
+PYTHON: 3.8
 ## Install
 default, you had installed miniconda, matlab.
 
