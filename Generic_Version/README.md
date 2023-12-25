@@ -18,6 +18,7 @@ git clone https://github.com/bibo19842003/AD-ML.git -b master
 cd AD-ML
 cd Generic_Version
 pip install -r requirement.txt
+pip install scikit-learn==0.24.1
 ```
 
 # Below is origin README
